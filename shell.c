@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include "simple_shell.h"
 
+#define MAX_ARGS 64
+
 /**
  * sh_read_line - read one line from stdin
  *
@@ -26,7 +28,7 @@ char *sh_read_line(void)
 		return (NULL);
 	}
 
-	/* TODO(you): decide whether to strip trailing '\n' here or in execute */
+	/* Remove the trailing newline so tokenization is easier later. */
 	if (nread > 0 && line[nread - 1] == '\n')
 		line[nread - 1] = '\0';
 
@@ -34,7 +36,7 @@ char *sh_read_line(void)
 }
 
 /**
- * sh_execute - execute one-word command using execve
+ * sh_execute - execute one command line using fork + execve
  * @prog_name: argv[0] from main (used by perror)
  * @line: input line buffer
  *
@@ -44,19 +46,32 @@ int sh_execute(char *prog_name, char *line)
 {
 	pid_t pid;
 	int wstatus;
-	char *argv[2];
+	char *argv[MAX_ARGS];
 	char *cmd;
+	char *token;
+	int i;
 
-	/* TODO(you): split command line (0.1 expects one command word only) */
+	/*
+	 * Split by spaces/tabs.
+	 * This keeps the parser simple while supporting cases like:
+	 * "./hbtn_ls /var"
+	 */
 	cmd = strtok(line, " \t");
 	if (cmd == NULL)
 		return (0);
 
-	/* TODO(you): for later tasks, build argv dynamically for arguments */
 	argv[0] = cmd;
-	argv[1] = NULL;
+	i = 1;
+	token = strtok(NULL, " \t");
+	while (token != NULL && i < MAX_ARGS - 1)
+	{
+		argv[i] = token;
+		i++;
+		token = strtok(NULL, " \t");
+	}
+	argv[i] = NULL;
 
-	/* TODO(you): create child process */
+	/* Create child process for command execution. */
 	pid = fork();
 	if (pid == -1)
 	{
@@ -66,15 +81,15 @@ int sh_execute(char *prog_name, char *line)
 
 	if (pid == 0)
 	{
-		/* TODO(you): child replaces itself with requested program */
+		/* Child replaces its image with the target program. */
 		execve(cmd, argv, environ);
 
-		/* execve only returns on failure */
+		/* execve only returns when there is an error. */
 		perror(prog_name);
 		_exit(127);
 	}
 
-	/* TODO(you): parent waits for child before prompting again */
+	/* Parent waits for child so we do not leave zombie processes. */
 	if (waitpid(pid, &wstatus, 0) == -1)
 	{
 		perror(prog_name);
@@ -104,7 +119,7 @@ int sh_run(char *prog_name)
 
 	while (1)
 	{
-		/* TODO(you): match exact prompt required by your checker */
+		/* Print prompt only in interactive mode (not when piped). */
 		if (interactive)
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
