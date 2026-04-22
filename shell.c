@@ -158,7 +158,7 @@ int sh_run(char *prog_name)
 		/* Solo mostrar el símbolo del sistema si una persona real está escribiendo
 		   (no mostrarlo cuando los comandos se tuberizar) */
 		if (interactive)
-			write(STDOUT_FILENO, "#cisfun$ ", 9);  /* Imprimir el símbolo del sistema */
+			write(STDOUT_FILENO, "HolbieShell$ ", 13);  /* Imprimir el símbolo del sistema */
 
 		/* Pedir un comando al usuario */
 		line = sh_read_line();
