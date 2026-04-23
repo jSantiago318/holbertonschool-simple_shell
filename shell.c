@@ -135,6 +135,8 @@ int sh_run(char *prog_name)
 			cmd = remap;
 		}
 
+	
+
 		status = sh_execute(prog_name, cmd);
 		free(line);
 	}

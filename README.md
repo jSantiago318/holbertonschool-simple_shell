@@ -15,6 +15,10 @@ This project is a minimal UNIX command line interpreter for the first checker st
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o simple_shell
 ```
 
+```sh
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o simple_shell && ./simple_shell
+```
+
 ## Run
 
 ```sh
