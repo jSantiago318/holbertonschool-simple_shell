@@ -9,6 +9,6 @@
  */
 int main(int argc, char **argv)
 {
-	(void)argc;
+	(void)argc; /* Silienciamos el warning: argc no se usa directamente */
 	return (sh_run(argv[0]));
 }

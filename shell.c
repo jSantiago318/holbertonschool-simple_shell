@@ -105,7 +105,7 @@ int sh_run(char *prog_name)
 	while (1)
 	{
 		if (interactive)
-			write(STDOUT_FILENO, "#HolbertonRootShell$ ", 21);
+			write(STDOUT_FILENO, "$", 1);
 		line = sh_read_line();
 		if (line == NULL)
 		{
@@ -134,7 +134,17 @@ int sh_run(char *prog_name)
 			strcpy(remap, "/bin/ls /bin/");
 			cmd = remap;
 		}
+		    else if (strcmp(line,"exit") == 0)
+        {
+            free(line);
+            break;
+        }        
 
+        else if(strcmp(line,"env") == 0)
+        {
+            strcpy(remap, "/usr/bin/env");
+            cmd = remap;
+        }
 	
 
 		status = sh_execute(prog_name, cmd);
