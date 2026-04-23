@@ -4,7 +4,7 @@ This project is a minimal UNIX command line interpreter for the first checker st
 
 ## What this version supports
 
-- Displays prompt `holbieshell$ ` in interactive mode
+- Displays prompt `$` in interactive mode
 - Reads one line with `getline`
 - Handles EOF (`Ctrl+D`) 
 - Handles 'ls' , 'ls -a' ,...

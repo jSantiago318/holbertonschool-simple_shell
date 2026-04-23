@@ -1,1 +1,106 @@
-.TH
+.\" Man page for hsh - Holberton School simple shell
+.TH HSH 1 "April 2026" "Holberton School" "User Commands"
+
+.SH NAME
+hsh \- A simple UNIX command line interpreter
+
+.SH SYNOPSIS
+.B hsh
+.RI [ command ]
+
+.SH DESCRIPTION
+.B hsh
+is a simple UNIX command interpreter written in C as part of the
+Holberton School curriculum. It replicates basic functionality of
+.B /bin/sh
+and supports both interactive and non-interactive modes.
+
+.PP
+In
+.B interactive mode,
+the shell displays a prompt
+.B ($)
+and waits for the user to type a command.
+The command is executed and the prompt appears again.
+
+.PP
+In
+.B non-interactive mode,
+commands are passed via a pipe or file and executed without displaying a prompt.
+
+.SH BUILTINS
+The following built-in commands are supported:
+
+.TP
+.B exit
+Exit the shell. The shell will terminate and return the exit status
+of the last command executed.
+
+.TP
+.B env
+Print the current environment variables to standard output.
+Each variable is printed on its own line in the format NAME=VALUE.
+
+.SH EXAMPLES
+.B Interactive mode:
+.br
+$ ./hsh
+.br
+($) /bin/ls
+.br
+hsh main.c shell.c
+.br
+($)
+.br
+($) exit
+
+.PP
+.B Non-interactive mode:
+.br
+$ echo "/bin/ls" | ./hsh
+.br
+hsh main.c shell.c
+
+.PP
+.B Piping a file:
+.br
+$ cat commands.txt
+.br
+/bin/ls
+.br
+/bin/ls
+.br
+$ cat commands.txt | ./hsh
+.br
+hsh main.c shell.c
+.br
+hsh main.c shell.c
+
+.PP
+.B Invalid command error:
+.br
+$ echo "qwerty" | ./hsh
+.br
+./hsh: 1: qwerty: not found
+
+.SH COMPILATION
+To compile hsh, run the following command:
+.PP
+.B gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
+
+.SH RETURN VALUE
+Returns the exit status of the last command executed.
+Returns 0 on success, or a non-zero value on error.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1),
+.BR execve (2),
+.BR fork (2),
+.BR waitpid (2)
+
+.SH AUTHORS
+Jorge Burgos <jorgeburgos46@gmail.com>
+.br
+Joshua Santiago <joshuasantiago111@gmail.com>
+
