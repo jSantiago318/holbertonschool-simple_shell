@@ -30,5 +30,3 @@ Or non-interactive:
 ```sh
 echo "/bin/ls" | ./simple_shell
 ```
-
-exit
