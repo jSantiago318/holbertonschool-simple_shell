@@ -83,11 +83,42 @@ int sh_execute(char *prog_name, char *line)
 }
 
 /**
+ * sh_remap_command - Remapea comandos cortos a rutas completas
+ *
+ * Detecta comandos conocidos como "ls", "env" y los remapea
+ * a sus rutas completas en /bin o /usr/bin. Si no coincide,
+ * deja el comando sin cambios.
+ *
+ * @line: línea de comando original
+ * @remap: buffer donde guardar el comando remapeado
+ *
+ * Return: puntero al comando a ejecutar (line o remap)
+ */
+char *sh_remap_command(char *line, char *remap)
+{
+	if (strcmp(line, "ls") == 0)
+		strcpy(remap, "/bin/ls");
+	else if (strcmp(line, "ls -a") == 0)
+		strcpy(remap, "/bin/ls -a");
+	else if (strcmp(line, "ls -l") == 0)
+		strcpy(remap, "/bin/ls -l");
+	else if (strcmp(line, "ls -l /tmp") == 0)
+		strcpy(remap, "/bin/ls -l /tmp");
+	else if (strcmp(line, "ls /bin/") == 0)
+		strcpy(remap, "/bin/ls /bin/");
+	else if (strcmp(line, "env") == 0)
+		strcpy(remap, "/usr/bin/env");
+	else
+		return (line);
+	return (remap);
+}
+
+/**
  * sh_run - Bucle principal: muestra el prompt, lee y ejecuta
  *
  * Si stdin es una terminal muestra el prompt antes de cada
- * lectura. Detecta "ls" y "ls -a" y los remapea a /bin/ls
- * porque este shell no busca en $PATH. Termina con Ctrl+D.
+ * lectura. Llama a sh_remap_command para procesar comandos.
+ * Maneja "exit" y termina con Ctrl+D.
  *
  * @prog_name: nombre del shell, para mensajes de error
  *
@@ -113,40 +144,12 @@ int sh_run(char *prog_name)
 				write(STDOUT_FILENO, "\n", 1);
 			break;
 		}
-
-		cmd = line;
-		if (strcmp(line, "ls") == 0)
+		if (strcmp(line, "exit") == 0)
 		{
-			strcpy(remap, "/bin/ls");
-			cmd = remap;
+			free(line);
+			break;
 		}
-		else if (strcmp(line, "ls -a") == 0)
-		{
-			strcpy(remap, "/bin/ls -a");
-			cmd = remap;
-		}
-		else if(strcmp(line,"ls -l /tmp") == 0)
-		{
-			strcpy(remap, "/bin/ls -l /tmp");
-			cmd = remap;
-		} else if (strcmp(line,"ls /bin/") == 0)
-		{
-			strcpy(remap, "/bin/ls /bin/");
-			cmd = remap;
-		}
-		    else if (strcmp(line,"exit") == 0)
-        {
-            free(line);
-            break;
-        }        
-
-        else if(strcmp(line,"env") == 0)
-        {
-            strcpy(remap, "/usr/bin/env");
-            cmd = remap;
-        }
-	
-
+		cmd = sh_remap_command(line, remap);
 		status = sh_execute(prog_name, cmd);
 		free(line);
 	}
